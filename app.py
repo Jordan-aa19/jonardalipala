@@ -1,51 +1,32 @@
-from flask import Flask, jsonify, request
+
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
-# Home Endpoint
-@app.route('/')
-def home():
-    return "Welcome to Jorand Alipala's Flask API!"
 
-# Student Endpoint
-@app.route('/student')
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route("/student")
 def get_student():
     return jsonify({
         "student_id": "24-00193",
-        "name": "Jonard Alipala",
+        "name": "JONARD ALIPALA;",
         "program": "BSIT",
-        "year": 3,
+        "year": 1,
         "section": "A"
     })
 
-# Hello Endpoint
-@app.route('/hello')
+
+@app.route("/hello")
 def say_hello():
-    name = request.args.get('name', 'Student')
+    name = request.args.get("name", "Student")
     return jsonify({
         "message": f"Hello, {name}!"
     })
 
-# NEW ENDPOINT 1: About Me
-@app.route('/about')
-def about():
-    return jsonify({
-        "name": "Jonard Alipala",
-        "program": "BSIT",
-        "year": 3,
-        "section": "A",
-        "interest": "Electrical Engineering"
-    })
 
-# NEW ENDPOINT 2: Greeting with Input
-@app.route('/greet')
-def greet():
-    name = request.args.get('name', 'Friend')
-    return jsonify({
-        "message": f"Hello {name}! Welcome to Alipala's API.",
-        "creator": "Jonard Alipala"
-    })
-
-# Run the Flask application
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

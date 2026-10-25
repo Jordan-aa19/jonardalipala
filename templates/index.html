@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student API Interface</title>
+</head>
+<body>
+    <h1>Student API Interface</h1>
+
+    <button onclick="loadStudent()">Load Student Information</button>
+
+    <div id="result"></div>
+
+    <script>
+        function loadStudent() {
+            fetch("/student")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP error: " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("result").innerHTML =
+                        "<p><b>Student ID:</b> " + data.student_id + "</p>" +
+                        "<p><b>Name:</b> " + data.name + "</p>" +
+                        "<p><b>Program:</b> " + data.program + "</p>" +
+                        "<p><b>Year:</b> " + data.year + "</p>" +
+                        "<p><b>Section:</b> " + data.section + "</p>";
+                })
+                .catch(error => {
+                    document.getElementById("result").textContent =
+                        "Unable to retrieve data. " + error.message;
+                });
+        }
+    </script>
+</body>
+</html>
