@@ -1,40 +1,177 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student API Interface</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f4f6f9;
+        }
+
+        h1 {
+            text-align: center;
+            color: #234;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input {
+            padding: 10px;
+            width: 65%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #result, #schoolResult {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
 </head>
+
 <body>
+
     <h1>Student API Interface</h1>
 
-    <button onclick="loadStudent()">Load Student Information</button>
+    <!-- Student Information -->
+    <div class="container">
+        <h2>Student Information</h2>
 
-    <div id="result"></div>
+        <button onclick="loadStudent()">
+            Load Student Information
+        </button>
+
+        <div id="result"></div>
+    </div>
+
+    <!-- Greeting API -->
+    <div class="container">
+        <h2>Greeting API</h2>
+
+        <input
+            type="text"
+            id="nameInput"
+            placeholder="Enter your first name"
+        >
+
+        <button onclick="sayHello()">
+            Say Hello
+        </button>
+
+        <p id="greeting"></p>
+    </div>
+
+    <!-- Custom API -->
+    <div class="container">
+        <h2>Custom School API</h2>
+
+        <button onclick="loadSchool()">
+            Load School Information
+        </button>
+
+        <div id="schoolResult"></div>
+    </div>
 
     <script>
+
+        // Load Student Information
         function loadStudent() {
-            fetch("/student")
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("HTTP error: " + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("result").innerHTML =
-                        "<p><b>Student ID:</b> " + data.student_id + "</p>" +
-                        "<p><b>Name:</b> " + data.name + "</p>" +
-                        "<p><b>Program:</b> " + data.program + "</p>" +
-                        "<p><b>Year:</b> " + data.year + "</p>" +
-                        "<p><b>Section:</b> " + data.section + "</p>";
-                })
-                .catch(error => {
-                    document.getElementById("result").textContent =
-                        "Unable to retrieve data. " + error.message;
-                });
+
+            fetch('/student')
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById('result').innerHTML =
+
+                    '<p><b>Student ID:</b> ' + data.student_id + '</p>' +
+                    '<p><b>Name:</b> ' + data.name + '</p>' +
+                    '<p><b>Program:</b> ' + data.program + '</p>' +
+                    '<p><b>Year:</b> ' + data.year + '</p>' +
+                    '<p><b>Section:</b> ' + data.section + '</p>';
+
+            })
+            .catch(error => {
+
+                document.getElementById('result').innerText =
+                    'Unable to retrieve data.';
+
+            });
         }
+
+
+        // Greeting API
+        function sayHello() {
+
+            const name = document.getElementById('nameInput').value;
+
+            fetch('/hello?name=' + encodeURIComponent(name))
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById('greeting').innerText =
+                    data.message;
+
+            })
+            .catch(error => {
+
+                document.getElementById('greeting').innerText =
+                    'Unable to retrieve greeting.';
+
+            });
+        }
+
+
+        // Custom School API
+        function loadSchool() {
+
+            fetch('/school')
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById('schoolResult').innerHTML =
+
+                    '<p><b>School:</b> ' + data.school_name + '</p>' +
+                    '<p><b>Location:</b> ' + data.location + '</p>' +
+                    '<p><b>Course:</b> ' + data.course + '</p>' +
+                    '<p><b>Message:</b> ' + data.message + '</p>';
+
+            })
+            .catch(error => {
+
+                document.getElementById('schoolResult').innerText =
+                    'Unable to retrieve school information.';
+
+            });
+        }
+
     </script>
+
 </body>
 </html>
