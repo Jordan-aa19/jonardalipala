@@ -1,57 +1,71 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student API Interface</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 700px;
+            background: #f2f4f8;
+            max-width: 750px;
             margin: 40px auto;
             padding: 20px;
-            background-color: #f4f6f9;
         }
 
         h1 {
             text-align: center;
-            color: #234;
+            color: #183153;
         }
 
-        .container {
+        .card {
             background: white;
             padding: 20px;
             margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px #ddd;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
 
         button {
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #007bff;
+            background: #087cff;
             color: white;
+            padding: 10px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 5px;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background: #0056b3;
         }
 
         input {
             padding: 10px;
-            width: 65%;
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin: 5px;
         }
 
-        #result, #schoolResult {
+        .result {
             margin-top: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            background: #fafafa;
+        }
+
+        .student {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        h2 {
+            color: #183153;
         }
     </style>
 </head>
@@ -60,19 +74,23 @@
 
     <h1>Student API Interface</h1>
 
-    <!-- Student Information -->
-    <div class="container">
+    <!-- STUDENT INFORMATION -->
+    <div class="card">
+
         <h2>Student Information</h2>
 
         <button onclick="loadStudent()">
             Load Student Information
         </button>
 
-        <div id="result"></div>
+        <div id="result" class="result"></div>
+
     </div>
 
-    <!-- Greeting API -->
-    <div class="container">
+
+    <!-- GREETING API -->
+    <div class="card">
+
         <h2>Greeting API</h2>
 
         <input
@@ -86,30 +104,73 @@
         </button>
 
         <p id="greeting"></p>
+
     </div>
 
-    <!-- Custom API -->
-    <div class="container">
+
+    <!-- CUSTOM SCHOOL API -->
+    <div class="card">
+
         <h2>Custom School API</h2>
 
         <button onclick="loadSchool()">
             Load School Information
         </button>
 
-        <div id="schoolResult"></div>
+        <div id="schoolResult" class="result"></div>
+
     </div>
+
+
+    <!-- DATABASE STUDENTS -->
+    <div class="card">
+
+        <h2>Students from Database</h2>
+
+        <button onclick="loadStudents()">
+            Load Students
+        </button>
+
+        <div id="studentList" class="result"></div>
+
+    </div>
+
+
+    <!-- SEARCH BY SECTION -->
+    <div class="card">
+
+        <h2>Search Students by Section</h2>
+
+        <input
+            type="text"
+            id="sectionInput"
+            placeholder="Enter section (A, B, C)"
+        >
+
+        <button onclick="searchSection()">
+            Search Students
+        </button>
+
+        <div id="sectionResult" class="result"></div>
+
+    </div>
+
 
     <script>
 
-        // Load Student Information
+        // STUDENT INFORMATION
         function loadStudent() {
 
             fetch('/student')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Student API error');
+                }
+                return response.json();
+            })
             .then(data => {
 
                 document.getElementById('result').innerHTML =
-
                     '<p><b>Student ID:</b> ' + data.student_id + '</p>' +
                     '<p><b>Name:</b> ' + data.name + '</p>' +
                     '<p><b>Program:</b> ' + data.program + '</p>' +
@@ -118,18 +179,18 @@
 
             })
             .catch(error => {
-
                 document.getElementById('result').innerText =
                     'Unable to retrieve data.';
-
             });
+
         }
 
 
-        // Greeting API
+        // GREETING API
         function sayHello() {
 
-            const name = document.getElementById('nameInput').value;
+            const name =
+                document.getElementById('nameInput').value;
 
             fetch('/hello?name=' + encodeURIComponent(name))
             .then(response => response.json())
@@ -145,22 +206,27 @@
                     'Unable to retrieve greeting.';
 
             });
+
         }
 
 
-        // Custom School API
+        // CUSTOM SCHOOL API
         function loadSchool() {
 
             fetch('/school')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('School API error');
+                }
+                return response.json();
+            })
             .then(data => {
 
                 document.getElementById('schoolResult').innerHTML =
-
                     '<p><b>School:</b> ' + data.school_name + '</p>' +
                     '<p><b>Location:</b> ' + data.location + '</p>' +
-                    '<p><b>Course:</b> ' + data.course + '</p>' +
-                    '<p><b>Message:</b> ' + data.message + '</p>';
+                    '<p><b>Program:</b> ' + data.program + '</p>' +
+                    '<p><b>Department:</b> ' + data.department + '</p>';
 
             })
             .catch(error => {
@@ -169,6 +235,97 @@
                     'Unable to retrieve school information.';
 
             });
+
+        }
+
+
+        // LOAD ALL STUDENTS FROM DATABASE
+        function loadStudents() {
+
+            fetch('/students')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Database API error');
+                }
+                return response.json();
+            })
+            .then(data => {
+
+                let output = '';
+
+                data.forEach(student => {
+
+                    output +=
+                        '<div class="student">' +
+                        '<b>' + student.student_id + '</b> - ' +
+                        student.name + '<br>' +
+                        student.program + ' | Year ' +
+                        student.year + ' | Section ' +
+                        student.section +
+                        '</div>';
+
+                });
+
+                document.getElementById('studentList').innerHTML =
+                    output || 'No student records found.';
+
+            })
+            .catch(error => {
+
+                document.getElementById('studentList').innerText =
+                    'Unable to retrieve student records.';
+
+            });
+
+        }
+
+
+        // SEARCH STUDENTS BY SECTION
+        function searchSection() {
+
+            const section =
+                document.getElementById('sectionInput').value.trim();
+
+            if (!section) {
+                document.getElementById('sectionResult').innerText =
+                    'Please enter a section.';
+                return;
+            }
+
+            fetch('/students/section/' + encodeURIComponent(section))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Section API error');
+                }
+                return response.json();
+            })
+            .then(data => {
+
+                let output = '';
+
+                data.forEach(student => {
+
+                    output +=
+                        '<div class="student">' +
+                        '<b>' + student.name + '</b><br>' +
+                        student.student_id + ' | ' +
+                        student.program + ' | Year ' +
+                        student.year +
+                        '</div>';
+
+                });
+
+                document.getElementById('sectionResult').innerHTML =
+                    output || 'No students found in this section.';
+
+            })
+            .catch(error => {
+
+                document.getElementById('sectionResult').innerText =
+                    'Unable to search students.';
+
+            });
+
         }
 
     </script>
