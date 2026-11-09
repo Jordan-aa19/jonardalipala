@@ -2,12 +2,11 @@
 import sqlite3
 import os
 
-DATABASE = os.path.join(os.path.dirname(__file__), 'students.db')
+db_path = os.path.join(os.path.dirname(__file__), 'students.db')
 
-conn = sqlite3.connect(DATABASE)
+conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Create students table
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,20 +18,20 @@ CREATE TABLE IF NOT EXISTS students (
 )
 ''')
 
-# Clear old records before inserting new records
 cursor.execute("DELETE FROM students")
+cursor.execute("DELETE FROM sqlite_sequence WHERE name='students'")
 
-# Five sample student records
 students = [
-    ('2026-00230', 'IAN AUSTRIA', 'BSIT', 3, 'A'),
-    ('2026-00188', 'JOHN MICLAEL', 'BSIT', 3, 'A'),
-    ('2026-00125', 'RENIER CALAMBRO', 'BSIT', 3, 'A'),
-    ('2026-00126', 'RAVEEN CELO', 'BSIT', 3, 'A'),
-    ('2026-00127', 'Mark Lopez', 'BSIT', 3, 'B')
+    ('2026-00123', 'Juan Dela Cruz', 'BSIT', 1, 'A'),
+    ('2026-00124', 'Maria Santos', 'BSIT', 1, 'A'),
+    ('2026-00125', 'Pedro Reyes', 'BSIT', 2, 'B'),
+    ('2026-00126', 'Ana Garcia', 'BSCS', 2, 'B'),
+    ('2026-00127', 'Mark Lopez', 'BSIT', 3, 'C')
 ]
 
 cursor.executemany('''
-INSERT INTO students (student_id, name, program, year, section)
+INSERT INTO students
+(student_id, name, program, year, section)
 VALUES (?, ?, ?, ?, ?)
 ''', students)
 
