@@ -222,7 +222,7 @@ def delete_student(id):
 
 # CLASSMATE API PLACEHOLDER
 # Replace this URL when your classmate gives it to you.
-CLASSMATE_API = "PASTE_CLASSMATE_RENDER_API_URL_HERE"
+CLASSMATE_API = "https://myranie-arch.onrender.com/"
 
 
 # RETRIEVE CLASSMATE RECORDS (READ ONLY)
